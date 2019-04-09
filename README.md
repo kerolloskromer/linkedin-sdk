@@ -12,7 +12,7 @@ dependencies {
 ```
 Sign in with Linkedin with single line
 ```
-Linkedin.signIn(MainActivity.this, clientId, clientSecret, redirectURL, state);
+  Linkedin.signIn(MainActivity.this, clientId, clientSecret, redirectURL, state);
 ```
 Receive sign in response
 ```
