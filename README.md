@@ -54,6 +54,10 @@ Also, if you know how to fix this issue please feel free to fork this repo and m
 * **Mina Mikhail** - *Android Developer* - [Linkedin](https://www.linkedin.com/in/minasamirgerges/)
 * **Esraa Nayel** - *Android Developer* - [Linkedin](https://www.linkedin.com/in/esraa-nayel-22362064/)
 
+## Contributers
+
+We are very excited to join us :)
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
