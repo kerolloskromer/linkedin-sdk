@@ -63,15 +63,11 @@ For example Redirect Url
 Please feel free to report bug , issue or improvement - see the [Issues](https://github.com/kerolloskromer/linkedin-sdk/issues) section fisrt to prevent duplicates.
 Also, if you know how to fix this issue please feel free to fork this repo and make a pull request and i will gladly review and merge and add you as a contributer :)
 
-## Authors
+## Contributers
 
 * **Kerollos Kromer** - *Android Developer* - [Linkedin](https://www.linkedin.com/in/kerollos-kromer-39aba078/) - [Github](https://github.com/kerolloskromer)
 * **Mina Mikhail** - *Android Developer* - [Linkedin](https://www.linkedin.com/in/minasamirgerges/) - [Github](https://github.com/Mina-Mikhail)
 * **Esraa Nayel** - *Android Developer* - [Linkedin](https://www.linkedin.com/in/esraa-nayel-22362064/) - [Github](https://github.com/EsraaNayel)
-
-## Contributers
-
-We are very excited to join us :)
 
 ## License
 
