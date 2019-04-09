@@ -2,6 +2,12 @@
 
 Unofficial Linkedin SDK
 
+## Features
+
+- [x] Sign In with LinkedIn.
+- [x] Fetch Linked In user lite profile (id,firstname,lastname,profilepicture).
+- [x] Fetch Linked In user email address.
+
 ## Getting Started
 
 Add this dependency to your app build.gradle file
