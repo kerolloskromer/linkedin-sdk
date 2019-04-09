@@ -12,9 +12,9 @@ Unofficial Linkedin SDK
 
 Add this dependency to your app build.gradle file
 ```
-dependencies {
-  implementation "com.kromer:linkedin-sdk:1.0"
-}
+  dependencies {
+    implementation "com.kromer:linkedin-sdk:1.0"
+  }
 ```
 Sign in with Linkedin with single line
 ```
