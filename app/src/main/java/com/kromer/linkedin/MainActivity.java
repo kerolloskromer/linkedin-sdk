@@ -13,7 +13,7 @@ public class MainActivity extends AppCompatActivity {
   String clientId = "86kpneombjdevn";
   String clientSecret = "MlJ6doVcJ2IIOjgf";
   String redirectURL = "http://appsinnovate.com/";
-  String state; // unique string of your choice designed to protect against CSRF attacks.
+  String state; //unique string of your choice designed to protect against CSRF attacks.
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
