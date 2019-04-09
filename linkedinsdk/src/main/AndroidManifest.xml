@@ -11,6 +11,13 @@
       android:usesCleartextTraffic="true"
       tools:ignore="GoogleAppIndexingWarning,UnusedAttribute"
       >
-    <activity android:name="com.kromer.linkedinsdk.ui.SignInActivity"/>
+
+    <activity
+        android:name=".ui.SignInActivity"
+        android:configChanges="orientation|screenSize"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+        android:windowSoftInputMode="adjustResize"/>
+
   </application>
+
 </manifest>

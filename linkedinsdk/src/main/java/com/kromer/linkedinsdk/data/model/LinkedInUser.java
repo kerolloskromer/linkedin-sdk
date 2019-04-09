@@ -6,7 +6,7 @@ import android.os.Parcelable;
 /**
  * Created by Kerollos Kromer on 07-Apr-19.
  */
-public class LinkedinUser implements Parcelable {
+public class LinkedInUser implements Parcelable {
 
   private String token;
   private String id;
@@ -15,7 +15,7 @@ public class LinkedinUser implements Parcelable {
   private String profilePicture;
   private String emailAddress;
 
-  public LinkedinUser() {
+  public LinkedInUser() {
 
   }
 
@@ -71,7 +71,7 @@ public class LinkedinUser implements Parcelable {
     this.emailAddress = emailAddress;
   }
 
-  private LinkedinUser(Parcel in) {
+  private LinkedInUser(Parcel in) {
     token = in.readString();
     id = in.readString();
     firstName = in.readString();
@@ -80,15 +80,15 @@ public class LinkedinUser implements Parcelable {
     emailAddress = in.readString();
   }
 
-  public static final Creator<LinkedinUser> CREATOR = new Creator<LinkedinUser>() {
+  public static final Creator<LinkedInUser> CREATOR = new Creator<LinkedInUser>() {
     @Override
-    public LinkedinUser createFromParcel(Parcel in) {
-      return new LinkedinUser(in);
+    public LinkedInUser createFromParcel(Parcel in) {
+      return new LinkedInUser(in);
     }
 
     @Override
-    public LinkedinUser[] newArray(int size) {
-      return new LinkedinUser[size];
+    public LinkedInUser[] newArray(int size) {
+      return new LinkedInUser[size];
     }
   };
 

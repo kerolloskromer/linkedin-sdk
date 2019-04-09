@@ -10,11 +10,13 @@ public class EmailResponse {
 
   private List<Element> elements;
 
-  public List<Element> getElements() {
-    return elements;
+  public String getEmail() {
+    return (elements != null && elements.size() > 0 && elements.get(0).getHandle() != null)
+        ? elements.get(0).getHandle().getEmailAddress()
+        : "";
   }
 
-  public static class Element {
+  private static class Element {
     /**
      * handle : urn:li:emailAddress:730115854
      * handle~ : {"emailAddress":"kerolloskromer@gmail.com"}
@@ -23,18 +25,18 @@ public class EmailResponse {
     @SerializedName("handle~")
     private Handle handle;
 
-    public Handle getHandle() {
+    private Handle getHandle() {
       return handle;
     }
 
-    public static class Handle {
+    private static class Handle {
       /**
        * emailAddress : kerolloskromer@gmail.com
        */
 
       private String emailAddress;
 
-      public String getEmailAddress() {
+      private String getEmailAddress() {
         return emailAddress;
       }
     }
