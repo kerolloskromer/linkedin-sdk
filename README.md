@@ -10,17 +10,27 @@ Unofficial SDK for Linkedin v2 REST APIs
 
 ## Getting Started
 
-Add this dependency to your app build.gradle file
+1- Create app on [Linkedin Developers Console](https://www.linkedin.com/developers/apps)
+
+2- From Auth section get Client ID and Client Secret and do not forget to add “Redirect URL”. The reason being, it will be later used to get callback for identifying the response in native webviews. You can put in any Redirect URL and not necessarily a real one. It can be any value starting with https:// prefix.
+For example Redirect Url
+```
+  https://com.kromer.linkedin.oauth/oauth
+```
+
+3- Add this dependency to your app build.gradle file
 ```
   dependencies {
     implementation "com.kromer:linkedin-sdk:1.0"
   }
 ```
-Sign in with Linkedin with single line
+4- Sign in with Linkedin with single line
 ```
   Linkedin.signIn(MainActivity.this, clientId, clientSecret, redirectURL, state);
 ```
-Receive sign in response
+"state" is a unique string of your choice designed to protect against CSRF attacks.
+
+5- Receive sign in response
 ```
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
