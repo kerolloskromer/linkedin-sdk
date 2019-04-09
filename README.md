@@ -1,6 +1,6 @@
 # Linkedin SDK (Unofficial)
 
-Unofficial Linkedin SDK
+Unofficial SDK for Linkedin v2 REST APIs
 
 ## Features
 
