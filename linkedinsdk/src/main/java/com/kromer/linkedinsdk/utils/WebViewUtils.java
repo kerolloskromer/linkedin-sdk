@@ -7,23 +7,34 @@ package com.kromer.linkedinsdk.utils;
  * *
  */
 
-import android.webkit.JavascriptInterface;
+import android.content.Context;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class WebViewUtils {
 
-  public static class MyJsToAndroid {
-    @JavascriptInterface
-    public void myClick(String idOrClass) {
-      System.out.println("--clicked--element--id-or-class-->" + idOrClass);
+  public static String injectedJs(Context context) {
+    BufferedReader stream = null;
+    StringBuilder jsBuilder = new StringBuilder();
+    try {
+      stream = new BufferedReader(new InputStreamReader(context.getAssets().open("js.js")));
+      String line;
+      while ((line = stream.readLine()) != null) {
+        jsBuilder.append(line.trim());
+      }
+      return jsBuilder.toString();
+    } catch (IOException e) {
+      e.printStackTrace();
+    } finally {
+      if (stream != null) {
+        try {
+          stream.close();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
     }
-  }
-
-  public static String addMyClickCallBackJs() {
-    String js = "javascript:";
-    js += "function myClick(this.area-label){" +
-        "if(event.target.className == null){my.myClick(this.area-label)}" +
-        "else{my.myClick(this.area-label)}}";
-    js += "document.addEventListener(\"click\",myClick,true);";
-    return js;
+    return "";
   }
 }

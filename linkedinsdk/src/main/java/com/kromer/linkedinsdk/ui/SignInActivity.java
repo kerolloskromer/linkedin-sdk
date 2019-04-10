@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.webkit.JavascriptInterface;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
@@ -35,7 +36,6 @@ import com.kromer.linkedinsdk.data.network.response.AccessTokenResponse;
 import com.kromer.linkedinsdk.databinding.ActivitySignInBinding;
 import com.kromer.linkedinsdk.utils.Constants;
 import com.kromer.linkedinsdk.utils.NetworkUtils;
-import com.kromer.linkedinsdk.utils.WebViewUtils.MyJsToAndroid;
 import com.uber.autodispose.ScopeProvider;
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -43,7 +43,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.kromer.linkedinsdk.utils.WebViewUtils.addMyClickCallBackJs;
+import static com.kromer.linkedinsdk.utils.WebViewUtils.injectedJs;
 import static com.uber.autodispose.AutoDispose.autoDisposable;
 
 public class SignInActivity
@@ -104,8 +104,16 @@ public class SignInActivity
   private void initWebView() {
     webView = mViewDataBinding.webView;
     webView.requestFocus(View.FOCUS_DOWN);
+    webView.addJavascriptInterface(
+        new Object() {
+          @JavascriptInterface
+          public void onClick(String clickedElement) {
+            System.out.println("-->CLICK--->" + clickedElement);
+          }
+        },
+        "appHost"
+    );
 
-    webView.addJavascriptInterface(new MyJsToAndroid(), "my");
     WebSettings webSettings = webView.getSettings();
     webSettings.setJavaScriptEnabled(true);
     webView.setScrollbarFadingEnabled(true);
@@ -127,9 +135,6 @@ public class SignInActivity
     });
     webView.loadUrl(getAuthorizationUrl());
   }
-  // https://www.linkedin.com/start/join
-  // https://www.linkedin.com/feed/
-  // must clear web cache
 
   @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   private WebViewClient getLollipopWebViewClient() {
@@ -139,30 +144,23 @@ public class SignInActivity
         String url = request.getUrl().toString();
         Log.w(TAG, url);
 
-        //when cancel url contain ?trk=current page
-
-        if (url.contains("session_redirect")
-            || url.contains("code=")
-            || url.contains("login-success")) {
-
-          view.loadUrl(url);
-          Uri uri = Uri.parse(url);
-          String code = uri.getQueryParameter(CodeUrlParameters.CODE);
-          if (code != null && !TextUtils.isEmpty(code)) {
-            Log.w(TAG, "code = " + code);
-            showLoading();
-            compositeDisposable = new CompositeDisposable();
-            linkedInUser = new LinkedInUser();
-            getAccessToken(code);
-          }
-
-          if (url.contains(ErrorCode.ERROR_USER_CANCELLED_MSG)) {
-            onLinkedInSignInFailure(ErrorCode.ERROR_USER_CANCELLED,
-                getResources().getString(R.string.user_cancelled));
-          }
+        view.loadUrl(url);
+        Uri uri = Uri.parse(url);
+        String code = uri.getQueryParameter(CodeUrlParameters.CODE);
+        if (code != null && !TextUtils.isEmpty(code)) {
+          Log.w(TAG, "code = " + code);
+          showLoading();
+          compositeDisposable = new CompositeDisposable();
+          linkedInUser = new LinkedInUser();
+          getAccessToken(code);
         }
 
-        return true;
+        if (url.contains(ErrorCode.ERROR_USER_CANCELLED_MSG)) {
+          onLinkedInSignInFailure(ErrorCode.ERROR_USER_CANCELLED,
+              getResources().getString(R.string.user_cancelled));
+        }
+
+        return super.shouldOverrideUrlLoading(view, request);
       }
 
       @Override
@@ -172,17 +170,16 @@ public class SignInActivity
               getResources().getString(R.string.no_internet));
         }
 
-        // Register my clicks lister to each element in page
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-          view.evaluateJavascript(addMyClickCallBackJs(), null);
-        }
-
         showLoading();
       }
 
       @Override
       public void onPageFinished(WebView view, String url) {
-        webView.findAllAsync(ErrorCode.ERROR_MSG);
+        //webView.findAllAsync(ErrorCode.ERROR_MSG);
+        hideLoading();
+        final String injectedJs =
+            "javascript:(function(){" + injectedJs(SignInActivity.this) + "})()";
+        webView.loadUrl(injectedJs);
       }
 
       @Override
