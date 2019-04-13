@@ -3,7 +3,6 @@ package com.kromer.linkedinsdk.ui;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
@@ -18,11 +17,11 @@ import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.Circle;
 import com.kromer.linkedinsdk.Linkedin;
@@ -42,7 +41,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
+import java.util.ArrayList;
+import java.util.List;
 
+import static com.kromer.linkedinsdk.utils.WebViewUtils.clearCookies;
 import static com.kromer.linkedinsdk.utils.WebViewUtils.injectedJs;
 import static com.uber.autodispose.AutoDispose.autoDisposable;
 
@@ -60,6 +62,12 @@ public class SignInActivity
   private CompositeDisposable compositeDisposable;
   private LinkedInUser linkedInUser;
 
+  private boolean isFirstTime = true;
+  private boolean shouldOpenNextPage = true;
+  private boolean isCancelClicked = false;
+  private List<String> supportedButtons = new ArrayList<>();
+  private List<String> cancelButtons = new ArrayList<>();
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -68,10 +76,46 @@ public class SignInActivity
       onLinkedInSignInFailure(ErrorCode.ERROR_NO_INTERNET,
           getResources().getString(R.string.no_internet));
     } else {
+      initSupportedButtons();
+      initCancelButtons();
       performDataBinding();
       getIntentData();
       setUpViews();
     }
+  }
+
+  private void initSupportedButtons() {
+    // English
+    supportedButtons.add("sign in");
+    supportedButtons.add("join now");
+    supportedButtons.add("agree &amp; join");
+    supportedButtons.add("not you?");
+    supportedButtons.add("allow");
+
+    // Arabic
+    supportedButtons.add("تسجيل الدخول");
+    supportedButtons.add("انضم الآن");
+    supportedButtons.add("الموافقة والانضمام");
+    supportedButtons.add("ألست أنت؟");
+    supportedButtons.add("السماح");
+
+    // Français
+    supportedButtons.add("s’identifier");
+    supportedButtons.add("a’inscrire");
+    supportedButtons.add("accepter et s’inscrire");
+    supportedButtons.add("ce n’est pas vous ?");
+    supportedButtons.add("autoriser");
+  }
+
+  private void initCancelButtons() {
+    // English
+    cancelButtons.add("cancel");
+
+    // Arabic
+    cancelButtons.add("إلغاء");
+
+    // Français
+    cancelButtons.add("annuler");
   }
 
   private void performDataBinding() {
@@ -109,6 +153,26 @@ public class SignInActivity
           @JavascriptInterface
           public void onClick(String clickedElement) {
             System.out.println("-->CLICK--->" + clickedElement);
+
+            for (String str : supportedButtons) {
+              if (clickedElement.toLowerCase().contains(str)) {
+                shouldOpenNextPage = true;
+                break;
+              } else {
+                shouldOpenNextPage = false;
+              }
+            }
+
+            if (!shouldOpenNextPage) {
+              for (String str : cancelButtons) {
+                if (clickedElement.toLowerCase().contains(str)) {
+                  isCancelClicked = true;
+                  break;
+                } else {
+                  isCancelClicked = false;
+                }
+              }
+            }
           }
         },
         "appHost"
@@ -141,72 +205,90 @@ public class SignInActivity
     return new WebViewClient() {
       @Override
       public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-        String url = request.getUrl().toString();
-        Log.w(TAG, url);
+        if (shouldOpenNextPage) {
+          String url = request.getUrl().toString();
+          Log.w(TAG, "shouldOverrideUrlLoading-->" + url);
 
-        view.loadUrl(url);
-        Uri uri = Uri.parse(url);
-        String code = uri.getQueryParameter(CodeUrlParameters.CODE);
-        if (code != null && !TextUtils.isEmpty(code)) {
-          Log.w(TAG, "code = " + code);
-          showLoading();
-          compositeDisposable = new CompositeDisposable();
-          linkedInUser = new LinkedInUser();
-          getAccessToken(code);
+          if (!url.contains(redirectURL)) {
+            webView.loadUrl(url);
+          }
+
+          Uri uri = Uri.parse(url);
+          String code = uri.getQueryParameter(CodeUrlParameters.CODE);
+          if (code != null && !TextUtils.isEmpty(code)) {
+            Log.w(TAG, "code = " + code);
+            showLoading();
+            compositeDisposable = new CompositeDisposable();
+            linkedInUser = new LinkedInUser();
+            getAccessToken(code);
+          }
+
+          if (url.contains(ErrorCode.ERROR_USER_CANCELLED_MSG)) {
+            onLinkedInSignInFailure(ErrorCode.ERROR_USER_CANCELLED,
+                getResources().getString(R.string.user_cancelled));
+          }
+        } else {
+          if (isCancelClicked) {
+            onLinkedInSignInFailure(ErrorCode.ERROR_USER_CANCELLED,
+                getResources().getString(R.string.user_cancelled));
+          } else {
+            Toast.makeText(SignInActivity.this,
+                getResources().getString(R.string.action_not_supported), Toast.LENGTH_SHORT).show();
+          }
         }
 
-        if (url.contains(ErrorCode.ERROR_USER_CANCELLED_MSG)) {
-          onLinkedInSignInFailure(ErrorCode.ERROR_USER_CANCELLED,
-              getResources().getString(R.string.user_cancelled));
-        }
-
-        return super.shouldOverrideUrlLoading(view, request);
-      }
-
-      @Override
-      public void onPageStarted(WebView view, String url, Bitmap favicon) {
-        if (!NetworkUtils.isNetworkConnected(SignInActivity.this)) {
-          onLinkedInSignInFailure(ErrorCode.ERROR_NO_INTERNET,
-              getResources().getString(R.string.no_internet));
-        }
-
-        showLoading();
+        return true;
       }
 
       @Override
       public void onPageFinished(WebView view, String url) {
+        Log.w(TAG, "onPageFinished-->" + url);
+
         //webView.findAllAsync(ErrorCode.ERROR_MSG);
-        hideLoading();
-        final String injectedJs =
-            "javascript:(function(){" + injectedJs(SignInActivity.this) + "})()";
-        webView.loadUrl(injectedJs);
+        if (isFirstTime) {
+          isFirstTime = false;
+        } else {
+          hideLoading();
+        }
+        injectJS();
       }
 
       @Override
       public void onReceivedError(WebView view, int errorCode, String description,
           String failingUrl) {
-        showLoading();
+        if (!NetworkUtils.isNetworkConnected(SignInActivity.this)) {
+          onLinkedInSignInFailure(ErrorCode.ERROR_NO_INTERNET,
+              getResources().getString(R.string.no_internet));
+        } else {
+          onLinkedInSignInFailure(ErrorCode.ERROR_OTHER,
+              getResources().getString(R.string.some_error));
+        }
         super.onReceivedError(view, errorCode, description, failingUrl);
       }
 
       @Override
       public void onReceivedError(WebView view, WebResourceRequest request,
           WebResourceError error) {
-        showLoading();
+        if (!NetworkUtils.isNetworkConnected(SignInActivity.this)) {
+          onLinkedInSignInFailure(ErrorCode.ERROR_NO_INTERNET,
+              getResources().getString(R.string.no_internet));
+        } else {
+          onLinkedInSignInFailure(ErrorCode.ERROR_OTHER,
+              getResources().getString(R.string.some_error));
+        }
         super.onReceivedError(view, request, error);
       }
 
       @Override
       public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-        showLoading();
+        if (!NetworkUtils.isNetworkConnected(SignInActivity.this)) {
+          onLinkedInSignInFailure(ErrorCode.ERROR_NO_INTERNET,
+              getResources().getString(R.string.no_internet));
+        } else {
+          onLinkedInSignInFailure(ErrorCode.ERROR_OTHER,
+              getResources().getString(R.string.some_error));
+        }
         super.onReceivedSslError(view, handler, error);
-      }
-
-      @Override
-      public void onReceivedHttpError(WebView view, WebResourceRequest request,
-          WebResourceResponse errorResponse) {
-        showLoading();
-        super.onReceivedHttpError(view, request, errorResponse);
       }
     };
   }
@@ -215,65 +297,90 @@ public class SignInActivity
     return new WebViewClient() {
       @Override
       public boolean shouldOverrideUrlLoading(WebView view, String url) {
-        Log.w(TAG, url);
+        if (shouldOpenNextPage) {
+          Log.w(TAG, "shouldOverrideUrlLoading-->" + url);
 
-        Uri uri = Uri.parse(url);
-        String code = uri.getQueryParameter(CodeUrlParameters.CODE);
-        if (code != null && !TextUtils.isEmpty(code)) {
-          Log.w(TAG, "code = " + code);
-          showLoading();
-          compositeDisposable = new CompositeDisposable();
-          linkedInUser = new LinkedInUser();
-          getAccessToken(code);
+          if (!url.contains(redirectURL)) {
+            webView.loadUrl(url);
+          }
+
+          Uri uri = Uri.parse(url);
+          String code = uri.getQueryParameter(CodeUrlParameters.CODE);
+          if (code != null && !TextUtils.isEmpty(code)) {
+            Log.w(TAG, "code = " + code);
+            showLoading();
+            compositeDisposable = new CompositeDisposable();
+            linkedInUser = new LinkedInUser();
+            getAccessToken(code);
+          }
+
+          if (url.contains(ErrorCode.ERROR_USER_CANCELLED_MSG)) {
+            onLinkedInSignInFailure(ErrorCode.ERROR_USER_CANCELLED,
+                getResources().getString(R.string.user_cancelled));
+          }
+        } else {
+          if (isCancelClicked) {
+            onLinkedInSignInFailure(ErrorCode.ERROR_USER_CANCELLED,
+                getResources().getString(R.string.user_cancelled));
+          } else {
+            Toast.makeText(SignInActivity.this,
+                getResources().getString(R.string.action_not_supported), Toast.LENGTH_SHORT).show();
+          }
         }
 
-        if (url.contains(ErrorCode.ERROR_USER_CANCELLED_MSG)) {
-          onLinkedInSignInFailure(ErrorCode.ERROR_USER_CANCELLED,
-              getResources().getString(R.string.user_cancelled));
-        }
-
-        return super.shouldOverrideUrlLoading(view, url);
-      }
-
-      @Override
-      public void onPageStarted(WebView view, String url, Bitmap favicon) {
-        if (!NetworkUtils.isNetworkConnected(SignInActivity.this)) {
-          onLinkedInSignInFailure(ErrorCode.ERROR_NO_INTERNET,
-              getResources().getString(R.string.no_internet));
-        }
-        showLoading();
+        return true;
       }
 
       @Override
       public void onPageFinished(WebView view, String url) {
-        webView.findAllAsync(ErrorCode.ERROR_MSG);
+        Log.w(TAG, "onPageFinished-->" + url);
+
+        // webView.findAllAsync(ErrorCode.ERROR_MSG);
+
+        if (isFirstTime) {
+          isFirstTime = false;
+        } else {
+          hideLoading();
+        }
+        injectJS();
       }
 
       @Override
       public void onReceivedError(WebView view, int errorCode, String description,
           String failingUrl) {
-        showLoading();
+        if (!NetworkUtils.isNetworkConnected(SignInActivity.this)) {
+          onLinkedInSignInFailure(ErrorCode.ERROR_NO_INTERNET,
+              getResources().getString(R.string.no_internet));
+        } else {
+          onLinkedInSignInFailure(ErrorCode.ERROR_OTHER,
+              getResources().getString(R.string.some_error));
+        }
         super.onReceivedError(view, errorCode, description, failingUrl);
       }
 
       @Override
       public void onReceivedError(WebView view, WebResourceRequest request,
           WebResourceError error) {
-        showLoading();
+        if (!NetworkUtils.isNetworkConnected(SignInActivity.this)) {
+          onLinkedInSignInFailure(ErrorCode.ERROR_NO_INTERNET,
+              getResources().getString(R.string.no_internet));
+        } else {
+          onLinkedInSignInFailure(ErrorCode.ERROR_OTHER,
+              getResources().getString(R.string.some_error));
+        }
         super.onReceivedError(view, request, error);
       }
 
       @Override
       public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-        showLoading();
+        if (!NetworkUtils.isNetworkConnected(SignInActivity.this)) {
+          onLinkedInSignInFailure(ErrorCode.ERROR_NO_INTERNET,
+              getResources().getString(R.string.no_internet));
+        } else {
+          onLinkedInSignInFailure(ErrorCode.ERROR_OTHER,
+              getResources().getString(R.string.some_error));
+        }
         super.onReceivedSslError(view, handler, error);
-      }
-
-      @Override
-      public void onReceivedHttpError(WebView view, WebResourceRequest request,
-          WebResourceResponse errorResponse) {
-        showLoading();
-        super.onReceivedHttpError(view, request, errorResponse);
       }
     };
   }
@@ -380,6 +487,7 @@ public class SignInActivity
 
   private void onLinkedInSignInSuccess(LinkedInUser linkedinUser) {
     clear();
+
     Intent intent = new Intent();
     intent.putExtra(Constants.USER, linkedinUser);
     setResult(Constants.SUCCESS, intent);
@@ -389,10 +497,17 @@ public class SignInActivity
   private void onLinkedInSignInFailure(int errorType, String errorMsg) {
     Log.w(TAG, errorMsg);
     clear();
+
     Intent intent = new Intent();
     intent.putExtra(Constants.ERROR_TYPE, errorType);
     setResult(Constants.FAILURE, intent);
     finish();
+  }
+
+  private void injectJS() {
+    final String injectedJs =
+        "javascript:(function(){" + injectedJs(SignInActivity.this) + "})()";
+    webView.loadUrl(injectedJs);
   }
 
   private void showLoading() {
@@ -406,9 +521,21 @@ public class SignInActivity
   }
 
   private void clear() {
+    clearCookies(this);
+
     if (webView == null) return;
     webView.clearCache(true);
     webView.clearHistory();
+    webView.clearMatches();
+    webView.clearFormData();
+    webView.clearSslPreferences();
+  }
+
+  @Override
+  public void onBackPressed() {
+    clear();
+    onLinkedInSignInFailure(ErrorCode.ERROR_USER_CANCELLED,
+        getResources().getString(R.string.user_cancelled));
   }
 
   @Override

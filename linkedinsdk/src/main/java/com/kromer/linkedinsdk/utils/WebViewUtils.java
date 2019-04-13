@@ -8,6 +8,9 @@ package com.kromer.linkedinsdk.utils;
  */
 
 import android.content.Context;
+import android.os.Build;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -36,5 +39,20 @@ public class WebViewUtils {
       }
     }
     return "";
+  }
+
+  public static void clearCookies(Context context) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+      CookieManager.getInstance().removeAllCookies(null);
+      CookieManager.getInstance().flush();
+    } else {
+      CookieSyncManager cookieSyncMngr = CookieSyncManager.createInstance(context);
+      cookieSyncMngr.startSync();
+      CookieManager cookieManager = CookieManager.getInstance();
+      cookieManager.removeAllCookie();
+      cookieManager.removeSessionCookie();
+      cookieSyncMngr.stopSync();
+      cookieSyncMngr.sync();
+    }
   }
 }
