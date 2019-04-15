@@ -6,8 +6,8 @@ Unofficial SDK for Linkedin v2 REST APIs
 
 ## Features
 
-- [x] Sign in with Linkedin.
-- [x] Fetch Linkedin user full profile (id , firstName , lastName , profilePicture , emailAddress).
+- [ ] Sign in with Linkedin
+- [x] Fetch Linkedin user full profile (id , firstName , lastName , profilePicture , emailAddress)
 
 ## Getting Started
 
