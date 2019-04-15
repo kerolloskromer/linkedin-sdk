@@ -1,3 +1,5 @@
+[![](https://jitpack.io/v/kerolloskromer/linkedin-sdk.svg)](https://jitpack.io/#kerolloskromer/linkedin-sdk)
+
 # Linkedin SDK (Unofficial)
 
 Unofficial SDK for Linkedin v2 REST APIs
@@ -18,17 +20,17 @@ For example Redirect Url
 ```
 3- Add in your root build.gradle at the end of repositories
 ```
-	allprojects {
-		repositories {
-			...
-			maven { url 'https://jitpack.io' }
-		}
-	}
+allprojects {
+  repositories {
+    ...
+    maven { url 'https://jitpack.io' }
+  }
+}
 ```
 4- Add the dependency in your app build.gradle file
 ```
   dependencies {
-    implementation 'com.github.kerolloskromer:linkedin-sdk:1.0.0'
+    implementation 'com.github.kerolloskromer:linkedin-sdk:<latest-version>'
   }
 ```
 5- Sign in with Linkedin with single line
