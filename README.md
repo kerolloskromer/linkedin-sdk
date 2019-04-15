@@ -1,17 +1,17 @@
 [![](https://jitpack.io/v/kerolloskromer/linkedin-sdk.svg)](https://jitpack.io/#kerolloskromer/linkedin-sdk)
 
-# Linkedin SDK (Unofficial)
+# LinkedIn SDK (Unofficial)
 
-Unofficial SDK for Linkedin v2 REST APIs
+Unofficial SDK for LinkedIn v2 REST APIs
 
 ## Features
 
-- [ ] Sign in with Linkedin
-- [x] Fetch Linkedin user full profile (id , firstName , lastName , profilePicture , emailAddress)
+- [x] Sign In with LinkedIn
+- [x] Fetch LinkedIn user full profile (id , firstName , lastName , profilePicture , emailAddress)
 
 ## Getting Started
 
-1- Create app on [Linkedin Developers Console](https://www.linkedin.com/developers/apps)
+1- Create app on [LinkedIn Developers Console](https://www.linkedin.com/developers/apps)
 
 2- From Auth section get Client ID and Client Secret and do not forget to add “Redirect URL”. The reason being, it will be later used to get callback for identifying the response in native webviews. You can put in any Redirect URL and not necessarily a real one. It can be any value starting with https:// prefix.
 For example Redirect Url
@@ -33,7 +33,7 @@ allprojects {
     implementation 'com.github.kerolloskromer:linkedin-sdk:<latest-version>'
   }
 ```
-5- Sign in with Linkedin with single line
+5- Sign in with LinkedIn with single line
 ```
   Linkedin.signIn(MainActivity.this, clientId, clientSecret, redirectURL, state);
 ```
@@ -75,9 +75,13 @@ Also, if you know how to fix this issue please feel free to fork this repo and m
 
 ## Contributers
 
-* **Kerollos Kromer** - *Android Developer* - [Linkedin](https://www.linkedin.com/in/kerollos-kromer-39aba078/) - [Github](https://github.com/kerolloskromer)
-* **Mina Mikhail** - *Android Developer* - [Linkedin](https://www.linkedin.com/in/minasamirgerges/) - [Github](https://github.com/Mina-Mikhail)
-* **Esraa Nayel** - *Android Developer* - [Linkedin](https://www.linkedin.com/in/esraa-nayel-22362064/) - [Github](https://github.com/EsraaNayel)
+* **Kerollos Kromer** - *Android Developer* - [LinkedIn](https://www.linkedin.com/in/kerollos-kromer-39aba078/) - [Github](https://github.com/kerolloskromer)
+* **Mina Mikhail** - *Android Developer* - [LinkedIn](https://www.linkedin.com/in/minasamirgerges/) - [Github](https://github.com/Mina-Mikhail)
+* **Esraa Nayel** - *Android Developer* - [LinkedIn](https://www.linkedin.com/in/esraa-nayel-22362064/) - [Github](https://github.com/EsraaNayel)
+
+## Coming Features
+
+- [ ] Share on LinkedIn
 
 ## License
 
