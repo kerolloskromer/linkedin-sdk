@@ -16,20 +16,28 @@ For example Redirect Url
 ```
   https://com.kromer.linkedin.oauth/oauth
 ```
-
-3- Add this dependency to your app build.gradle file
+3- Add in your root build.gradle at the end of repositories
+```
+	allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+```
+4- Add the dependency in your app build.gradle file
 ```
   dependencies {
-    implementation "com.kromer:linkedin-sdk:1.0"
+    implementation 'com.github.kerolloskromer:linkedin-sdk:1.0.0'
   }
 ```
-4- Sign in with Linkedin with single line
+5- Sign in with Linkedin with single line
 ```
   Linkedin.signIn(MainActivity.this, clientId, clientSecret, redirectURL, state);
 ```
 "state" is a unique string of your choice designed to protect against CSRF attacks.
 
-5- Receive sign in response
+6- Receive sign in response
 ```
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
