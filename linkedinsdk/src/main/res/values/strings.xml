@@ -1,3 +1,10 @@
 <resources>
-  <string name="app_name">Linkedin SDK</string>
+  <string name="app_name" translatable="false">LinkedIn SDK</string>
+
+  <!-- Error Messages -->
+  <string name="no_internet">No Internet Connection</string>
+  <string name="user_cancelled">User Cancelled</string>
+  <string name="some_error">Some error occurred, Please try again later</string>
+  <string name="action_not_supported">Action not supported here</string>
+
 </resources>

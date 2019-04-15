@@ -10,7 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
   private static final String BASE_URL = "https://www.linkedin.com/uas/oauth2/";
-  //res/xml/network_security_config.xml
+  //Please check --> res/xml/network_security_config.xml
 
   private static ApiClient instance;
 

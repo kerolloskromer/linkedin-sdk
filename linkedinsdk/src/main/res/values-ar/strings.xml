@@ -1,0 +1,9 @@
+<resources>
+
+  <!-- Error Messages -->
+  <string name="no_internet">لا يوجد اتصال بالانترنت</string>
+  <string name="user_cancelled">تم الإلغاء بواسطة المستخدم</string>
+  <string name="some_error">حدث خطاً ما، برجاء اعادة المحاولة لاحقاً</string>
+  <string name="action_not_supported">الرابط غير متاح</string>
+
+</resources>

@@ -19,6 +19,7 @@ buildscript {
     interceptor = '3.9.0'
 
     parceler_api = '1.1.11'
+    loading_animations = '1.2.0'
 
     junit = '4.12'
     support_test_runner = '1.0.2'
