@@ -47,8 +47,6 @@ dependencies {
   implementation "com.squareup.okhttp3:logging-interceptor:$interceptor"
 
   // Utils
-  implementation "org.parceler:parceler-api:$parceler_api"
-  annotationProcessor "org.parceler:parceler:$parceler_api"
   implementation "com.github.ybq:Android-SpinKit:$loading_animations" // Loading animations
 
   testImplementation "junit:junit:$junit"
