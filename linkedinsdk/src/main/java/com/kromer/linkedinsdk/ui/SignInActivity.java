@@ -85,24 +85,27 @@ public class SignInActivity
   }
 
   private void initSupportedButtons() {
+    // Handle supported links
+    // Prevent user make any action in webView except signIn
+
     // English
     supportedButtons.add("sign in");
-    supportedButtons.add("join now");
-    supportedButtons.add("agree &amp; join");
+    //supportedButtons.add("join now");
+    //supportedButtons.add("agree &amp; join");
     supportedButtons.add("not you?");
     supportedButtons.add("allow");
 
     // Arabic
     supportedButtons.add("تسجيل الدخول");
-    supportedButtons.add("انضم الآن");
-    supportedButtons.add("الموافقة والانضمام");
+    //supportedButtons.add("انضم الآن");
+    //supportedButtons.add("الموافقة والانضمام");
     supportedButtons.add("ألست أنت؟");
     supportedButtons.add("السماح");
 
     // Français
     supportedButtons.add("s’identifier");
-    supportedButtons.add("a’inscrire");
-    supportedButtons.add("accepter et s’inscrire");
+    //supportedButtons.add("a’inscrire");
+    //supportedButtons.add("accepter et s’inscrire");
     supportedButtons.add("ce n’est pas vous ?");
     supportedButtons.add("autoriser");
   }
@@ -205,9 +208,9 @@ public class SignInActivity
     return new WebViewClient() {
       @Override
       public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+        String url = request.getUrl().toString();
+        Log.w(TAG, "shouldOverrideUrlLoading-->" + url);
         if (shouldOpenNextPage) {
-          String url = request.getUrl().toString();
-          Log.w(TAG, "shouldOverrideUrlLoading-->" + url);
 
           if (!url.contains(redirectURL)) {
             webView.loadUrl(url);
@@ -297,8 +300,8 @@ public class SignInActivity
     return new WebViewClient() {
       @Override
       public boolean shouldOverrideUrlLoading(WebView view, String url) {
+        Log.w(TAG, "shouldOverrideUrlLoading-->" + url);
         if (shouldOpenNextPage) {
-          Log.w(TAG, "shouldOverrideUrlLoading-->" + url);
 
           if (!url.contains(redirectURL)) {
             webView.loadUrl(url);
@@ -336,7 +339,6 @@ public class SignInActivity
         Log.w(TAG, "onPageFinished-->" + url);
 
         // webView.findAllAsync(ErrorCode.ERROR_MSG);
-
         if (isFirstTime) {
           isFirstTime = false;
         } else {

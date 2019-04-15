@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <color name="colorPrimary">#008577</color>
-  <color name="colorPrimaryDark">#00574B</color>
-  <color name="colorAccent">#D81B60</color>
+  <color name="libPrimaryColor">#283e4a</color>
+  <color name="libPrimaryDarkColor">#283e4a</color>
+  <color name="libAccentColor">#0077B5</color>
 
   <color name="linkedinBlue">#0077B5</color>
 </resources>
