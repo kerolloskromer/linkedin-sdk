@@ -75,7 +75,6 @@ Also, if you know how to fix this issue please feel free to fork this repo and m
 
 ## Contributers
 
-* **Kerollos Kromer** - *Android Developer* - [LinkedIn](https://www.linkedin.com/in/kerollos-kromer-39aba078/) - [Github](https://github.com/kerolloskromer)
 * **Mina Mikhail** - *Android Developer* - [LinkedIn](https://www.linkedin.com/in/minasamirgerges/) - [Github](https://github.com/Mina-Mikhail)
 * **Esraa Nayel** - *Android Developer* - [LinkedIn](https://www.linkedin.com/in/esraa-nayel-22362064/) - [Github](https://github.com/EsraaNayel)
 
